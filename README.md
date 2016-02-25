@@ -3,5 +3,6 @@ Desarrollo de la Tarea 1 del curso Métodos Computacionales Avanzados
 
 Integrantes: 
 
-Sebastiáń Caldas \n
-Carlos Miguel Patiño
+-Sebastiáń Caldas
+
+-Carlos Miguel Patiño
