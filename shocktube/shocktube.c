@@ -12,8 +12,7 @@ void solve(solver stepAlgorithm, double tMax, char *filename, int plots);
 
 int main()
 {
-  //solve(LaxFriedrichsStep, 1.0, "LaxFriedrichs", 5);
-  solve(upwindGodunovStep, 1.0, "UpwindGodunov", 5);
+   solve(upwindGodunovStep, 1.0, "UpwindGodunov", 5);
 }
 
 
@@ -61,7 +60,7 @@ void solve(solver stepAlgorithm, double tMax, char *filename, int plots)
       fprintf(stdout,"Step %d Time %f\tRho_avg %f\t u_avg %f\t e_avg %f\t P_avg %f\n", 
 	      step, t,rho_avg,u_avg,e_avg,P_avg);
       plot++;
-      fprintf(stdout, "Entrando a fase de step\n");
+
       while (t < tMax * plot / (double)(plots)) {
 	boundaryConditions(U);
 	tau = CFL * h / cMax();
