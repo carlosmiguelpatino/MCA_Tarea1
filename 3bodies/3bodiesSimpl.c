@@ -15,6 +15,7 @@ double deriv_q3(double t, double q1, double p1, double q3, double p3, double eps
 double deriv_p3(double t, double q1, double p1, double q3, double p3, double epsilon);
 void bigMass_simplectic_step(double t, double delta_t, double* q1, double* p1, double epsilon);
 void littleMass_simplectic_step(double t, double delta_t, double* q1, double* p1, double* q3, double* p3, double epsilon);
+double calculateEnergy(double q1, double p1, double q2, double p2, double epsilon);
 
 int main(int argc, char **argv) {
 
@@ -30,6 +31,7 @@ int main(int argc, char **argv) {
   int i, j;
 
   double previous_p1_s;
+  double energy;
 
   FILE* input;
   int n_conditions;
@@ -82,10 +84,11 @@ int main(int argc, char **argv) {
       littleMass_simplectic_step(t, delta_t, &q1_s, &p1_s, &q3_s, &p3_s, epsilon);
 
       t += delta_t;
+      energy = calculateEnergy(q1_s, p1_s, q2_s, p2_s, epsilon);
 
       // Print relevant results.
       if (p1_s == 0 || (previous_p1_s < 0 && p1_s > 0) ||  (previous_p1_s > 0 && p1_s < 0)) {
-        fprintf(simplectic_results, "%d %f %.15e %.15e\n", j, t, q3_s, p3_s);
+        fprintf(simplectic_results, "%d %f %.15e %.15e %.15e\n", j, t, q3_s, p3_s, energy);
       }
     }
   }
@@ -200,4 +203,20 @@ void littleMass_simplectic_step(double t, double delta_t, double* q1, double* p1
 
   *q3 = q3_in;
   *p3 = p3_in;
+}
+
+// The article states that only the "big masses" system is Hamiltonian. 
+// This system's energy is then the one we focus on.
+double calculateEnergy(double q1, double p1, double q2, double p2, double epsilon) {
+  double K = 0;
+  double U = 0;
+  int i,j;
+
+  K += 0.5*p1*p1;
+  K += 0.5*p2*p2;
+
+  U += -1.0/(2.0*sqrt(4*q1*q1 + epsilon));
+  U += -1.0/(2.0*sqrt(4*q2*q2 + epsilon)); 
+
+  return K + U;
 }
