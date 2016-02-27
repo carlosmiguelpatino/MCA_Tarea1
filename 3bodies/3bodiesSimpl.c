@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
 
       // Print relevant results.
       if (p1_s == 0 || (previous_p1_s < 0 && p1_s > 0) ||  (previous_p1_s > 0 && p1_s < 0)) {
-        fprintf(simplectic_results, "%f %.15e %.15e\n", t, q3_s, p3_s);
+        fprintf(simplectic_results, "%d %f %.15e %.15e\n", j, t, q3_s, p3_s);
       }
     }
   }

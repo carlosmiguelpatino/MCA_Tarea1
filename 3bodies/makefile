@@ -1,4 +1,4 @@
-all: simplectic_results_911.txt rk4_results_911.txt simplectic_results_1214.txt rk4_results_1214.txt
+all: simplectic_results_911.txt rk4_results_911.txt simplectic_results_1214.txt simplectic_results_15.txt simplectic_results_16.txt
 
 # Results of simplectic integration for plots 9 to 11.
 simplectic_results_911.txt: 3bodiesSimpl.x initialConditions911.txt 
@@ -8,13 +8,17 @@ simplectic_results_911.txt: 3bodiesSimpl.x initialConditions911.txt
 simplectic_results_1214.txt: 3bodiesSimpl.x initialConditions1214.txt 
 	./3bodiesSimpl.x 0.006 2800 initialConditions1214.txt 84 simplectic_results_1214.txt
 
+# Results of simplectic integration for plot 15.
+simplectic_results_15.txt: 3bodiesSimpl.x initialConditions15.txt 
+	./3bodiesSimpl.x 0.006 1800 initialConditions15.txt 114 simplectic_results_15.txt
+
+# Results of simplectic integration for plot 16. 
+simplectic_results_16.txt: 3bodiesSimpl.x initialConditions16.txt 
+	./3bodiesSimpl.x 0.006 2800 initialConditions16.txt 114 simplectic_results_16.txt
+
 # Results of runge kutta integration for plots 9 to 11.
 rk4_results_911.txt: 3bodiesRK4.x initialConditions911.txt 
 	./3bodiesRK4.x 0.006 2800 initialConditions911.txt 127 rk4_results_911.txt
-
-# Results of runge kutta integration for plots 12 to 14.
-rk4_results_1214.txt: 3bodiesRK4.x initialConditions911.txt 
-	./3bodiesRK4.x 0.006 2800 initialConditions1214.txt 84 rk4_results_1214.txt
 
 # Compiles C code.
 3bodiesSimpl.x: 3bodiesSimpl.c
@@ -24,4 +28,4 @@ rk4_results_1214.txt: 3bodiesRK4.x initialConditions911.txt
 	cc 3bodiesRK4.c -o 3bodiesRK4.x
 
 clean: 
-	rm -f simplectic_results.txt rk4_results.txt simplectic_results_911.txt rk4_results_911.txt simplectic_results_1214.txt rk4_results_1214.txt 3bodiesRK4.x 3bodiesSimpl.x
+	rm -f simplectic_results_911.txt simplectic_results_1214.txt simplectic_results_15.txt rk4_results_911.txt 3bodiesRK4.x 3bodiesSimpl.x

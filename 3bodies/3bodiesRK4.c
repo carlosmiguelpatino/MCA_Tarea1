@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
       t += delta_t;
 
       if (p1_rk == 0 || (previous_p1_rk < 0 && p1_rk > 0) ||  (previous_p1_rk > 0 && p1_rk < 0)) {
-        fprintf(rk4_results, "%f %.15e %.15e\n", t, q3_rk, p3_rk);
+        fprintf(rk4_results, "%d %f %.15e %.15e\n", j, t, q3_rk, p3_rk);
       }
     }
   }
