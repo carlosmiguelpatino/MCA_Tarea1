@@ -13,7 +13,7 @@ rk4_results_911.txt: 3bodiesRK4.x initialConditions911.txt
 	./3bodiesRK4.x 0.006 2800 initialConditions911.txt 127 rk4_results_911.txt
 
 # Results of runge kutta integration for plots 12 to 14.
-rk4_results_911.txt: 3bodiesRK4.x initialConditions911.txt 
+rk4_results_1214.txt: 3bodiesRK4.x initialConditions911.txt 
 	./3bodiesRK4.x 0.006 2800 initialConditions1214.txt 84 rk4_results_1214.txt
 
 # Compiles C code.
