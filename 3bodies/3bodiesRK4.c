@@ -13,14 +13,14 @@ double deriv_q1(double t, double q1, double p1, double epsilon);
 double deriv_p1(double t, double q1, double p1, double epsilon);
 double deriv_q3(double t, double q1, double p1, double q3, double p3, double epsilon);
 double deriv_p3(double t, double q1, double p1, double q3, double p3, double epsilon);
-void bigMass_simplectic_step(double t, double delta_t, double* q1, double* p1, double epsilon);
-void littleMass_simplectic_step(double t, double delta_t, double* q1, double* p1, double* q3, double* p3, double epsilon);
+void bigMass_RK4_step(double t, double delta_t, double *q1, double *p1, double epsilon);
+void littleMass_RK4_step(double t, double delta_t, double *q1, double *p1, double *q3, double *p3, double epsilon);
 
 int main(int argc, char **argv) {
 
-  // Variables for simplectic integration.
-  double q1_s, q2_s, q3_s;
-  double p1_s, p2_s, p3_s;
+  // Variables for RK4 integration.
+  double q1_rk, q2_rk, q3_rk;
+  double p1_rk, p2_rk, p3_rk;
 
   double t, epsilon;
 
@@ -29,13 +29,13 @@ int main(int argc, char **argv) {
   int n_steps;
   int i, j;
 
-  double previous_p1_s;
+  double previous_p1_rk;
 
   FILE* input;
   int n_conditions;
   char line[256];
 
-  FILE *simplectic_results;
+  FILE *rk4_results;
 
   // Without the correct number of attributes, the algorithm aborts.
   if(argc != 6)
@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
   T = atof(argv[2]);
   input = fopen(argv[3], "r");
   n_conditions = atof(argv[4]);
-  simplectic_results = fopen(argv[5], "w");
+  rk4_results = fopen(argv[5], "w");
 
   if(!input)
      exit(1);
@@ -67,25 +67,24 @@ int main(int argc, char **argv) {
     //printf("%d\n", j);
     
     // Extract conditions.
-    initialConditions(line, &q1_s, &p1_s, &q2_s, &p2_s, &q3_s, &p3_s);
+    initialConditions(line, &q1_rk, &p1_rk, &q2_rk, &p2_rk, &q3_rk, &p3_rk);
 
     for (i = 0 ; i < n_steps ; i++) {        
-      previous_p1_s = p1_s;
+      previous_p1_rk = p1_rk;
 
       // Solve for large masses.
-      bigMass_simplectic_step(t, delta_t, &q1_s, &p1_s, epsilon);
+      bigMass_RK4_step(t, delta_t, &q1_rk, &p1_rk, epsilon);
 
-      q2_s = -q1_s;
-      p2_s = -p1_s;
+      q2_rk = -q1_rk;
+      p2_rk = -p1_rk;
 
       // Solve for little mass.
-      littleMass_simplectic_step(t, delta_t, &q1_s, &p1_s, &q3_s, &p3_s, epsilon);
+      littleMass_RK4_step(t, delta_t, &q1_rk, &p1_rk, &q3_rk, &p3_rk, epsilon);
 
       t += delta_t;
 
-      // Print relevant results.
-      if (p1_s == 0 || (previous_p1_s < 0 && p1_s > 0) ||  (previous_p1_s > 0 && p1_s < 0)) {
-        fprintf(simplectic_results, "%f %.15e %.15e\n", t, q3_s, p3_s);
+      if (p1_rk == 0 || (previous_p1_rk < 0 && p1_rk > 0) ||  (previous_p1_rk > 0 && p1_rk < 0)) {
+        fprintf(rk4_results, "%f %.15e %.15e\n", t, q3_rk, p3_rk);
       }
     }
   }
@@ -156,47 +155,57 @@ double deriv_p3(double t, double q1, double p1, double q3, double p3, double eps
   return term1 - term2;
 }
 
-void bigMass_simplectic_step(double t, double delta_t, double* q1, double* p1, double epsilon) {
+void bigMass_RK4_step(double t, double delta_t, double *q1, double *p1, double epsilon) {
+  double k1, k2, k3, k4;
+  double l1, l2, l3, l4;
   double q1_in;
   double p1_in;
 
   q1_in = *q1;
   p1_in = *p1;
 
-  p1_in += 0.5 * alpha_1 * deriv_p1(t, q1_in, p1_in, epsilon) * delta_t;
-  q1_in += alpha_1 * deriv_q1(t, q1_in, p1_in, epsilon) * delta_t;
-  p1_in += 0.5 * alpha_1 * deriv_p1(t, q1_in, p1_in, epsilon) * delta_t;
+  k1 = deriv_q1(t, q1_in, p1_in, epsilon);  
+  l1 = deriv_p1(t, q1_in, p1_in, epsilon);  
 
-  p1_in += 0.5 * alpha_0 * deriv_p1(t, q1_in, p1_in, epsilon) * delta_t;
-  q1_in += alpha_0 * deriv_q1(t, q1_in, p1_in, epsilon) * delta_t;
-  p1_in += 0.5 * alpha_0 * deriv_p1(t, q1_in, p1_in, epsilon) * delta_t;
+  k2 = deriv_q1(t + 0.5*delta_t, q1_in + 0.5*k1*delta_t, p1_in + 0.5*l1*delta_t, epsilon);
+  l2 = deriv_p1(t + 0.5*delta_t, q1_in + 0.5*k1*delta_t, p1_in + 0.5*l1*delta_t, epsilon);
 
-  p1_in += 0.5 * alpha_1 * deriv_p1(t, q1_in, p1_in, epsilon) * delta_t;
-  q1_in += alpha_1 * deriv_q1(t, q1_in, p1_in, epsilon) * delta_t;
-  p1_in += 0.5 * alpha_1 * deriv_p1(t, q1_in, p1_in, epsilon) * delta_t;
+  k3 = deriv_q1(t + 0.5*delta_t, q1_in + 0.5*k2*delta_t, p1_in + 0.5*l2*delta_t, epsilon);
+  l3 = deriv_p1(t + 0.5*delta_t, q1_in + 0.5*k2*delta_t, p1_in + 0.5*l2*delta_t, epsilon);
+
+  k4 = deriv_q1(t + delta_t, q1_in + k3*delta_t, p1_in + l3*delta_t, epsilon);
+  l4 = deriv_p1(t + delta_t, q1_in + k3*delta_t, p1_in + l3*delta_t, epsilon);
+
+  q1_in += (k1/6.0 + k2/3.0 + k3/3.0 + k4/6.0)*delta_t;
+  p1_in += (l1/6.0 + l2/3.0 + l3/3.0 + l4/6.0)*delta_t;
 
   *q1 = q1_in;
   *p1 = p1_in;
 }
 
-void littleMass_simplectic_step(double t, double delta_t, double* q1, double* p1, double* q3, double* p3, double epsilon) {
+void littleMass_RK4_step(double t, double delta_t, double *q1, double *p1, double *q3, double *p3, double epsilon) {
+  double k1, k2, k3, k4;
+  double l1, l2, l3, l4;
   double q3_in;
   double p3_in;
 
   q3_in = *q3;
   p3_in = *p3;
 
-  p3_in += 0.5 * alpha_1 * deriv_p3(t, *q1, *p1, q3_in, p3_in, epsilon) * delta_t;
-  q3_in += alpha_1 * deriv_q3(t, *q1, *p1, q3_in, p3_in, epsilon) * delta_t;
-  p3_in += 0.5 * alpha_1 * deriv_p3(t, *q1, *p1, q3_in, p3_in, epsilon) * delta_t;
+  k1 = deriv_q3(t, *q1, *p1, q3_in, p3_in, epsilon);  
+  l1 = deriv_p3(t, *q1, *p1, q3_in, p3_in, epsilon);  
 
-  p3_in += 0.5 * alpha_0 * deriv_p3(t, *q1, *p1, q3_in, p3_in, epsilon) * delta_t;
-  q3_in += alpha_0 * deriv_q3(t, *q1, *p1, q3_in, p3_in, epsilon) * delta_t;
-  p3_in += 0.5 * alpha_0 * deriv_p3(t, *q1, *p1, q3_in, p3_in, epsilon) * delta_t;
+  k2 = deriv_q3(t + 0.5*delta_t, *q1, *p1, q3_in + 0.5*k1*delta_t, p3_in + 0.5*l1*delta_t, epsilon);
+  l2 = deriv_p3(t + 0.5*delta_t, *q1, *p1, q3_in + 0.5*k1*delta_t, p3_in + 0.5*l1*delta_t, epsilon);
 
-  p3_in += 0.5 * alpha_1 * deriv_p3(t, *q1, *p1, q3_in, p3_in, epsilon) * delta_t;
-  q3_in += alpha_1 * deriv_q3(t, *q1, *p1, q3_in, p3_in, epsilon) * delta_t;
-  p3_in += 0.5 * alpha_1 * deriv_p3(t, *q1, *p1, q3_in, p3_in, epsilon) * delta_t;
+  k3 = deriv_q3(t + 0.5*delta_t, *q1, *p1, q3_in + 0.5*k2*delta_t, p3_in + 0.5*l2*delta_t, epsilon);
+  l3 = deriv_p3(t + 0.5*delta_t, *q1, *p1, q3_in + 0.5*k2*delta_t, p3_in + 0.5*l2*delta_t, epsilon);
+
+  k4 = deriv_q3(t + delta_t, *q1, *p1, q3_in + k3*delta_t, p3_in + l3*delta_t, epsilon);
+  l4 = deriv_p3(t + delta_t, *q1, *p1, q3_in + k3*delta_t, p3_in + l3*delta_t, epsilon);
+
+  q3_in += (k1/6.0 + k2/3.0 + k3/3.0 + k4/6.0)*delta_t;
+  p3_in += (l1/6.0 + l2/3.0 + l3/3.0 + l4/6.0)*delta_t;
 
   *q3 = q3_in;
   *p3 = p3_in;
