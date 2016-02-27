@@ -28,4 +28,4 @@ rk4_results_911.txt: 3bodiesRK4.x initialConditions911.txt
 	cc 3bodiesRK4.c -o 3bodiesRK4.x
 
 clean: 
-	rm -f simplectic_results_911.txt simplectic_results_1214.txt simplectic_results_15.txt rk4_results_911.txt 3bodiesRK4.x 3bodiesSimpl.x
+	rm -f simplectic_results_911.txt simplectic_results_1214.txt simplectic_results_15.txt simplectic_results_16.txt rk4_results_911.txt 3bodiesRK4.x 3bodiesSimpl.x
