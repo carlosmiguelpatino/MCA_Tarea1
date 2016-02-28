@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "steps.h"
+#include "riemann.h"
 
 /*
   C adaptation from C++ code written by Richard J. Gonsalves.
