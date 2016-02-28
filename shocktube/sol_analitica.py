@@ -10,7 +10,7 @@ http://www.astro.uu.se/~hoefner/astro/teach/ch10.pdf
 n_points = 5000 #Numero de puntos en discretizacion
 
 x0 = 0.5
-t = 0.2
+t = 1
 
 #Constantes
 gamma = 1.4
@@ -113,35 +113,39 @@ P_num = datos[:,4]
 
 #Creacion de graficas
 plt.figure(1)
-plt.plot(x, rho)
-plt.plot(x, rho_num)
+plt.plot(x, rho, label = "Analitica")
+plt.plot(x, rho_num, label = "Numerica")
 plt.title("Grafica de Densidad")
 plt.xlabel(r'$x$')
 plt.ylabel(r'$\rho$')
+plt.legend()
 plt.savefig("Densidad.png")
 
 plt.figure(2)
-plt.plot(x, u)
-plt.plot(x, u_num)
+plt.plot(x, u, label = "Analitica")
+plt.plot(x, u_num, label = "Numerica")
 plt.title("Grafica de Velocidad")
 plt.xlabel(r'$x$')
 plt.ylabel(r'$Velocidad$')
+plt.legend()
 plt.savefig("Velocidad.png")
 
 plt.figure(3)
-plt.plot(x, e)
-plt.plot(x, e_num)
+plt.plot(x, e, label = "Analitica")
+plt.plot(x, e_num, label = "Numerica")
 plt.title("Grafica de Energia")
 plt.xlabel(r'$x$')
 plt.ylabel(r'$Energia$')
+plt.legend()
 plt.savefig("Energia.png")
 
 plt.figure(4)
-plt.plot(x, P)
-plt.plot(x, P_num)
+plt.plot(x, P, label = "Analitica")
+plt.plot(x, P_num, label = "Numerica")
 plt.title("Grafica de Presion")
 plt.xlabel(r'$x$')
 plt.ylabel(r'$P$')
+plt.legend()
 plt.savefig("Presion.png")
 
 
