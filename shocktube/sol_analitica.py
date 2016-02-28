@@ -9,7 +9,7 @@ http://www.astro.uu.se/~hoefner/astro/teach/ch10.pdf
 
 n_points = 5000 #Numero de puntos en discretizacion
 
-x0 = 0.5
+x0 = 2.0
 t = 1
 
 #Constantes
@@ -56,7 +56,7 @@ x4 = x0 + Ms*t
 
 #Llenado de variables en las regiones
 
-x = np.linspace(0, 1, n_points)
+x = np.linspace(0, 4, n_points)
 rho = np.zeros(n_points)
 P = np.zeros(n_points)
 u = np.zeros(n_points)
