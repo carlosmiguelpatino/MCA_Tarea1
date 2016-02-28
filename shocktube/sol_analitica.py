@@ -32,9 +32,6 @@ al   = np.sqrt(gamma*Pl/rho_l) #Velocidad del sonido en parte izquierda
 #Ecuacion para encontrar las raices
 
 def eq_implicita(Ms):
-    """parte1 = ((1- g2)**2)/(rho_r*(P + g2*Pr))
-    parte2 = (2*np.sqrt(gamma))/((gamma -1))*(1 - P**g3)
-    return (P - Pr)*np.sqrt(parte1) - parte2"""
     parte1 = Ms-(1/Ms)
     parte2 = (Pr/Pl)*((Ms*Ms/g3)- g2)
     parte3 = (al/g2)*(1-parte2**g3)
@@ -105,7 +102,7 @@ for i in range(0, n_points):
 
 
 #Importacion de datos en archivo
-datos = np.loadtxt('UpwindGodunov_step_1.dat')
+datos = np.loadtxt('UpwindGodunov_step_5.dat')
 rho_num = datos[:,1]
 u_num = datos[:,2]
 e_num = datos[:,3]
